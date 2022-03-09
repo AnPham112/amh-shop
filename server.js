@@ -14,6 +14,11 @@ app.use(fileUpload({
   useTempFiles: true,
 }))
 
+// Routes
+app.use('/user', require('./routes/userRouter'))
+app.use('/api', require('./routes/categoryRouter'))
+app.use('/api', require('./routes/upload'))
+
 // Connect to mongoDB
 const URI = process.env.MONGODB_URL
 mongoose.connect(URI,
@@ -23,8 +28,7 @@ mongoose.connect(URI,
   }
 )
 
-// Routes
-app.use('/user', require('./routes/userRouter'))
+
 
 app.get('/', function (req, res) {
   res.send("Welcome to the party")

@@ -38,7 +38,7 @@ class APIfeatures {
   paginating() {
     // *1 to convert String data to Number
     const page = this.queryString.page * 1 || 1
-    const limit = this.queryString.limit * 1 || 3
+    const limit = this.queryString.limit * 1 || 4
     const skip = (page - 1) * limit
     this.query = this.query.skip(skip).limit(limit)
     return this
@@ -61,6 +61,17 @@ const productCtrl = {
         result: products.length,
         products: products
       })
+    } catch (err) {
+      return res.status(500).json({ msg: err.message })
+    }
+  },
+  getProduct: async (req, res) => {
+    try {
+      const product = await Products.findById(req.params.id)
+      if (!product) {
+        return res.status(404).json({ msg: 'This product does not exist.' })
+      }
+      return res.status(200).json(product)
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }

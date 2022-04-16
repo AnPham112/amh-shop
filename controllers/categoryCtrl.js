@@ -17,8 +17,10 @@ const categoryCtrl = {
       const category = await Category.findOne({ name: name })
       if (category) return res.status(400).json({ msg: "This category already exists" })
       const newCategory = new Category({ name })
-      await newCategory.save()
-      res.status(201).json({ msg: "Created a category" })
+      await newCategory.save((error, category) => {
+        if (error) return res.status(400).json({ error })
+        if (category) return res.json({ category })
+      })
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
@@ -36,7 +38,7 @@ const categoryCtrl = {
       const { name } = req.body
       // await Category.findOneAndUpdate({ _id: req.params.id }, { name })
       await Category.findByIdAndUpdate(req.params.id, { name })
-      res.status(200).json({ msg: "Category updated" })
+      res.json({ msg: "Category updated" })
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }

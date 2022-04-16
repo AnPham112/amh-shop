@@ -56,7 +56,7 @@ const productCtrl = {
 
       // const products = await Products.find()
 
-      res.status(200).json({
+      res.json({
         status: 'success',
         result: products.length,
         products: products
@@ -71,26 +71,38 @@ const productCtrl = {
       if (!product) {
         return res.status(404).json({ msg: 'This product does not exist.' })
       }
-      return res.status(200).json(product)
+      return res.json(product)
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
   },
   createProduct: async (req, res) => {
     try {
-      const { product_id, title, price, description, content, images, category } = req.body
-      if (!images) return res.status(400).json({ msg: "No images uploaded" })
+      const { product_id, title, price, description,
+        // content,
+        // images,
+        productImages,
+        category } = req.body
+
+      if (!productImages.length) return res.status(400).json({ msg: "No images uploaded" })
 
       const product = await Products.findOne({ product_id })
       if (product) return res.status(400).json({ msg: "This product already exists" })
 
       const newProduct = new Products({
-        product_id, title: title.toLowerCase(), price, description, content, images, category
+        product_id, title, price, description,
+        // content, 
+        // images,
+        productImages,
+        category
       })
 
       // save new product to MongoDB
-      await newProduct.save()
-      res.status(201).json({ msg: "Created a product" })
+      await newProduct.save((error, product) => {
+        if (error) return res.status(400).json({ error })
+        if (product) return res.json({ product })
+      })
+      // res.json({ msg: "Created a product" })
 
     } catch (err) {
       return res.status(500).json({ msg: err.message })
@@ -106,14 +118,22 @@ const productCtrl = {
   },
   updateProduct: async (req, res) => {
     try {
-      const { title, price, description, content, images, category } = req.body
-      if (!images) return res.status(400).json({ msg: "No images uploaded" })
+      const { title, price, description,
+        // content, 
+        // images,
+        productImages,
+        category
+      } = req.body
+      if (!productImages) return res.status(400).json({ msg: "No images uploaded" })
 
       await Products.findByIdAndUpdate(req.params.id, {
-        title: title.toLowerCase, price, description, content, images, category
+        title, price, description,
+        // content,
+        // images,
+        productImages,
+        category
       })
-
-      res.status(200).json({ msg: "Updated a product" })
+      res.json({ msg: "Updated a product" })
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }

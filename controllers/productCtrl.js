@@ -22,7 +22,6 @@ class APIfeatures {
     // For example: localhost:5000/api/products?title[$regex]=wo => "title": "woman"
     queryStr = queryStr.replace(/\b(gte|gt|lt|lte|regex)\b/g, match => '$' + match)
     this.query.find(JSON.parse(queryStr))
-
     return this
   }
   sorting() {
@@ -53,9 +52,6 @@ const productCtrl = {
         .sorting()
         .paginating()
       const products = await features.query
-
-      // const products = await Products.find()
-
       res.json({
         status: 'success',
         result: products.length,
@@ -78,11 +74,7 @@ const productCtrl = {
   },
   createProduct: async (req, res) => {
     try {
-      const { product_id, title, price, description,
-        // content,
-        // images,
-        productImages,
-        category } = req.body
+      const { product_id, title, price, description, productImages, category } = req.body
 
       if (!productImages.length) return res.status(400).json({ msg: "No images uploaded" })
 
@@ -90,11 +82,7 @@ const productCtrl = {
       if (product) return res.status(400).json({ msg: "This product already exists" })
 
       const newProduct = new Products({
-        product_id, title, price, description,
-        // content, 
-        // images,
-        productImages,
-        category
+        product_id, title: title.toLowerCase(), price, description, productImages, category
       })
 
       // save new product to MongoDB
@@ -102,8 +90,6 @@ const productCtrl = {
         if (error) return res.status(400).json({ error })
         if (product) return res.json({ product })
       })
-      // res.json({ msg: "Created a product" })
-
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
@@ -118,20 +104,11 @@ const productCtrl = {
   },
   updateProduct: async (req, res) => {
     try {
-      const { title, price, description,
-        // content, 
-        // images,
-        productImages,
-        category
-      } = req.body
+      const { title, price, description, productImages, category } = req.body
       if (!productImages) return res.status(400).json({ msg: "No images uploaded" })
 
       await Products.findByIdAndUpdate(req.params.id, {
-        title, price, description,
-        // content,
-        // images,
-        productImages,
-        category
+        title: title.toLowerCase(), price, description, productImages, category
       })
       res.json({ msg: "Updated a product" })
     } catch (err) {

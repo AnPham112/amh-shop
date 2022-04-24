@@ -97,7 +97,7 @@ const productCtrl = {
   deleteProduct: async (req, res) => {
     try {
       await Products.findByIdAndDelete(req.params.id)
-      res.json({ msg: "Deleted a product" })
+      res.json({ msg: "Product deleted" })
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }
@@ -110,7 +110,7 @@ const productCtrl = {
       await Products.findByIdAndUpdate(req.params.id, {
         title: title.toLowerCase(), price, description, productImages, category
       })
-      res.json({ msg: "Updated a product" })
+      res.json({ msg: "Product updated" })
     } catch (err) {
       return res.status(500).json({ msg: err.message })
     }

@@ -84,9 +84,6 @@ const userCtrl = {
   },
   getUser: async (req, res) => {
     try {
-      //return json including user id
-      // res.json(req.user) 
-
       // get all user information except password
       const user = await Users.findById(req.user.id).select('-password')
       if (!user) return res.status(400).json({ msg: "User does not exist" })
@@ -112,7 +109,6 @@ const userCtrl = {
   history: async (req, res) => {
     try {
       const history = await Payments.find({ user_id: req.user.id })
-
       res.json(history)
     } catch (err) {
       return res.status(500).json({ msg: err.message })
